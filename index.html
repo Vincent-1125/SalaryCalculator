@@ -203,11 +203,11 @@ input[type=number]{-moz-appearance:textfield}
       <div class="form-row">
         <div class="form-group">
           <label class="form-label" for="annualAllowance">津贴/年</label>
-          <input class="form-input" type="number" id="annualAllowance" value="14400" min="0" oninput="recalc()">
+          <input class="form-input" type="number" id="annualAllowance" value="0" min="0" oninput="recalc()">
         </div>
         <div class="form-group">
           <label class="form-label" for="bonusMonths">年终期数</label>
-          <input class="form-input" type="number" id="bonusMonths" value="4" min="0" max="12" step="1" oninput="recalc()">
+          <input class="form-input" type="number" id="bonusMonths" value="3" min="0" max="12" step="1" oninput="recalc()">
           <div class="sub-label">月薪 × 期数 = 年终奖</div>
         </div>
       </div>
@@ -224,9 +224,9 @@ input[type=number]{-moz-appearance:textfield}
       <div class="form-group">
         <label class="form-label" for="city">所在城市</label>
         <select class="form-select" id="city" onchange="onCityChange()">
-          <option value="hangzhou" selected>杭州</option>
           <option value="beijing">北京</option>
-          <option value="shanghai">上海</option>
+          <option value="shanghai" selected>上海</option>
+          <option value="hangzhou">杭州</option>
           <option value="guangzhou">广州</option>
           <option value="shenzhen">深圳</option>
         </select>
