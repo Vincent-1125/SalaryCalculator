@@ -738,7 +738,7 @@ function recalc() {
   // 实际到账 = 总包 - 五险(个人) - 公积金(个人) - 个税
   const actualDeposit = totalPackage - annualSI - annualHF - totalTax;
   // 含公积金到手 (公积金+医保个人账户返还)
-  const broadTakeHome = totalPackage - annualPension - annualUnemploy - totalTax + annualHF + annualMedical;
+  const broadTakeHome = totalPackage - annualPension - annualUnemploy - totalTax + annualHF - annualMedical;
 
   const monthlyTakeHome = actualDeposit / 12;
   const annualTakeHome = actualDeposit;
