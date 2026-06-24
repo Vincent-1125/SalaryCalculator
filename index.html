@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="中国个人所得税计算器，支持五险一金、专项附加扣除、年终奖单独计税">
 <title>个税计算器 - Salary Calculator</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -39,7 +40,7 @@ input[type=number]{-moz-appearance:textfield}
   position:sticky;top:0;z-index:100;
   background:var(--color-surface);
   border-bottom:1px solid var(--color-border);
-  padding:var(--space-md) var(--space-md) calc(var(--space-md) + env(safe-area-inset-top,0));
+  padding:calc(var(--space-lg) + env(safe-area-inset-top,0)) var(--space-md) var(--space-md);
   cursor:pointer;
   transition:background .2s ease
 }
@@ -65,17 +66,20 @@ input[type=number]{-moz-appearance:textfield}
 .breakdown-inner{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:var(--space-sm);
+  gap:var(--space-md);
   padding-top:var(--space-md);
   border-top:1px solid var(--color-border);
   margin-top:var(--space-md)
 }
+.breakdown-col{display:flex;flex-direction:column;gap:var(--space-sm)}
 .breakdown-item{padding:var(--space-sm) var(--space-md);background:var(--color-surface-raised);border-radius:var(--radius-sm);text-align:center}
 .breakdown-item .label{font-size:.6875rem;color:var(--color-text-secondary);margin-bottom:2px}
 .breakdown-item .value{font-size:.9375rem;font-weight:600}
 .breakdown-item .value.positive{color:var(--color-positive)}
 .breakdown-item .value.accent{color:var(--color-accent)}
 .breakdown-item .value.warning{color:#fbbc04}
+.bd-sub{font-size:.6875rem;color:var(--color-text-secondary);margin-top:3px}
+.bd-sub span{color:#fbbc04;font-weight:600}
 
 /* Chevron */
 .chevron{display:inline-block;transition:transform .3s ease;margin-left:auto;flex-shrink:0;color:var(--color-text-secondary)}
@@ -138,6 +142,90 @@ input[type=number]{-moz-appearance:textfield}
 /* Container */
 .container{max-width:480px;margin:0 auto;padding-bottom:80px}
 
+/* App shell */
+.app-shell{display:flex;align-items:flex-start;max-width:760px;margin:0 auto}
+.main-col{flex:1;min-width:0}
+
+/* Sidebar */
+.sidebar{
+  width:210px;flex-shrink:0;
+  position:sticky;top:0;height:100vh;overflow-y:auto;
+  border-right:1px solid var(--color-border);
+  padding:var(--space-md);
+  display:none
+}
+@media(min-width:768px){
+  .sidebar{display:flex;flex-direction:column}
+  .container{max-width:none}
+}
+.sidebar-title{
+  font-size:.8rem;font-weight:600;color:var(--color-text-secondary);
+  letter-spacing:.04em;text-transform:uppercase;
+  margin-bottom:var(--space-sm)
+}
+.record-card{
+  background:var(--color-surface-raised);
+  border:1px solid var(--color-border);
+  border-radius:var(--radius-sm);
+  padding:var(--space-sm) 10px;
+  margin-bottom:var(--space-sm);
+  cursor:pointer;
+  transition:border-color .15s,background .15s
+}
+.record-card:hover{border-color:var(--color-accent);background:var(--color-surface)}
+.record-card.active{border-color:var(--color-accent)}
+.record-row1{display:flex;justify-content:space-between;align-items:center;margin-bottom:2px}
+.record-name{font-size:.8125rem;font-weight:600}
+.record-del{background:none;border:none;cursor:pointer;color:var(--color-text-secondary);font-size:1rem;line-height:1;padding:0}
+.record-del:hover{color:#f28b82}
+.record-vals{font-size:.6875rem;color:var(--color-text-secondary);line-height:1.5}
+.record-vals .hl{color:var(--color-positive);font-weight:600}
+.sidebar-empty{font-size:.75rem;color:var(--color-text-secondary);text-align:center;padding:var(--space-xl) 0}
+
+/* Save button */
+.save-bar{display:flex;justify-content:flex-end;align-items:center;gap:var(--space-sm);margin-top:var(--space-sm)}
+.save-btn{
+  background:var(--color-surface-raised);
+  border:1px solid var(--color-border);
+  border-radius:var(--radius-sm);
+  padding:5px 12px;
+  font-size:.75rem;
+  color:var(--color-accent);
+  cursor:pointer;
+  transition:background .15s,border-color .15s
+}
+.save-btn:hover{background:var(--color-border);border-color:var(--color-accent)}
+.save-name-input{
+  flex:1;max-width:140px;
+  background:var(--color-surface-raised);
+  border:1px solid var(--color-border);
+  border-radius:var(--radius-sm);
+  padding:5px 8px;
+  font-size:.75rem;
+  color:var(--color-text);
+  outline:none
+}
+.save-name-input:focus{border-color:var(--color-accent)}
+.save-toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--color-surface-raised);border:1px solid var(--color-border);
+  border-radius:var(--radius-md);padding:8px 16px;
+  font-size:.8125rem;color:var(--color-text);
+  opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;
+  z-index:999
+}
+.save-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* Chart */
+.chart-legend{
+  display:flex;gap:var(--space-md);
+  font-size:.75rem;color:var(--color-text-secondary);
+  margin-bottom:var(--space-sm)
+}
+.chart-legend span{display:flex;align-items:center;gap:5px}
+.chart-legend i{display:inline-block;width:10px;height:10px;border-radius:2px;flex-shrink:0}
+.chart-svg{display:block;width:100%;overflow:visible}
+
 /* Flash for result items */
 @keyframes barFlash{0%{background:rgba(52,168,83,.15)}100%{background:transparent}}
 .result-bar.flash{animation:barFlash .5s ease}
@@ -145,27 +233,36 @@ input[type=number]{-moz-appearance:textfield}
 @media (min-width:768px){
   .container{max-width:600px}
   .result-grid{grid-template-columns:repeat(4,1fr)}
-  .breakdown-inner{grid-template-columns:repeat(3,1fr)}
+  .breakdown-inner{grid-template-columns:1fr 1fr}
 }
 </style>
 </head>
 <body>
 
-<div class="container" id="app">
+<div class="app-shell">
+  <!-- Left Sidebar: Saved Records -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-title">已保存方案</div>
+    <div id="savedList"><div class="sidebar-empty">暂无记录</div></div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="main-col">
+  <div class="container" id="app">
   <!-- Sticky Result Bar -->
   <div class="result-bar" id="resultBar" onclick="toggleBreakdown()">
     <div class="result-grid">
       <div class="result-item">
-        <div class="label">月到手</div>
-        <div class="value positive" id="monthlyTakeHome">¥--</div>
+        <div class="label">年总包</div>
+        <div class="value accent" id="totalPackage">¥--</div>
       </div>
       <div class="result-item">
         <div class="label">年到手</div>
         <div class="value positive" id="annualTakeHome">¥--</div>
       </div>
       <div class="result-item">
-        <div class="label">年总包</div>
-        <div class="value accent" id="totalPackage">¥--</div>
+        <div class="label">含公积金到手</div>
+        <div class="value positive" id="annualBroadTakeHome">¥--</div>
       </div>
       <div class="result-item">
         <div class="label">年个税</div>
@@ -175,40 +272,58 @@ input[type=number]{-moz-appearance:textfield}
     <!-- Detailed Breakdown -->
     <div class="breakdown" id="breakdown">
       <div class="breakdown-inner">
-        <div class="breakdown-item"><div class="label">月薪 (税前)</div><div class="value" id="bdMonthlySalary">¥--</div></div>
-        <div class="breakdown-item"><div class="label">年度津贴</div><div class="value" id="bdAnnualAllowance">¥--</div></div>
-        <div class="breakdown-item"><div class="label">年终奖</div><div class="value" id="bdBonus">¥--</div></div>
-        <div class="breakdown-item"><div class="label">五险 (年)</div><div class="value" id="bdAnnualSI">¥--</div></div>
-        <div class="breakdown-item"><div class="label">公积金 (年)</div><div class="value" id="bdAnnualHF">¥--</div></div>
-        <div class="breakdown-item"><div class="label">税前扣除合计 (年)</div><div class="value" id="bdAnnualDeductions">¥--</div></div>
-        <div class="breakdown-item"><div class="label">应纳税所得额 (工资)</div><div class="value accent" id="bdTaxableSalary">¥--</div></div>
-        <div class="breakdown-item"><div class="label">应纳税所得额 (奖金)</div><div class="value accent" id="bdTaxableBonus">¥--</div></div>
-        <div class="breakdown-item"><div class="label">个税 (工资)</div><div class="value warning" id="bdTaxOnSalary">¥--</div></div>
-        <div class="breakdown-item"><div class="label">个税 (奖金)</div><div class="value warning" id="bdTaxOnBonus">¥--</div></div>
+        <div class="breakdown-col">
+          <div class="breakdown-item"><div class="label">工资 (年)</div><div class="value" id="bdAnnualSalaryBase">¥--</div></div>
+          <div class="breakdown-item"><div class="label">年度津贴</div><div class="value" id="bdAnnualAllowance">¥--</div></div>
+          <div class="breakdown-item"><div class="label">年终奖</div><div class="value" id="bdBonus">¥--</div></div>
+          <div class="breakdown-item"><div class="label">实际到账 (年)</div><div class="value positive" id="bdActualDeposit">¥--</div></div>
+          <div class="breakdown-item"><div class="label">含公积金到手 (年)</div><div class="value positive" id="bdBroadTakeHome">¥--</div></div>
+        </div>
+        <div class="breakdown-col">
+          <div class="breakdown-item"><div class="label">五险 (年)</div><div class="value" id="bdAnnualSI">¥--</div></div>
+          <div class="breakdown-item"><div class="label">医疗保险 (年)</div><div class="value" id="bdAnnualMedical">¥--</div></div>
+          <div class="breakdown-item"><div class="label">养老保险 (年)</div><div class="value" id="bdAnnualPension">¥--</div></div>
+          <div class="breakdown-item"><div class="label">公积金 (年)</div><div class="value" id="bdAnnualHF">¥--</div></div>
+          <div class="breakdown-item">
+            <div class="label">个税合计</div>
+            <!-- <div class="value warning" id="bdTaxTotal">¥--</div> -->
+            <div class="bd-sub">工资 <span id="bdTaxOnSalary">¥--</span> &middot; 年终 <span id="bdTaxOnBonus">¥--</span></div>
+          </div>
+        </div>
       </div>
     </div>
+    <!-- Save Bar -->
+    <div class="save-bar" onclick="event.stopPropagation()">
+      <input class="save-name-input" id="saveName" type="text" placeholder="方案名称（可留空）" maxlength="20">
+      <button class="save-btn" onclick="saveRecord()">&#128190; 保存方案</button>
+    </div>
   </div>
-
-  <!-- Section 1: Salary -->
   <div class="section section--open" id="secSalary">
     <div class="section-header" onclick="toggleSection('secSalary')">
       <span>① 薪资收入</span>
       <span class="chevron"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5.5l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
     </div>
     <div class="section-content">
-      <div class="form-group">
-        <label class="form-label" for="monthlySalary">月薪 (税前)</label>
-        <input class="form-input" type="number" id="monthlySalary" value="20000" min="0" oninput="recalc()">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="monthlySalary">月薪 (税前)</label>
+          <input class="form-input" type="number" id="monthlySalary" value="20000" min="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="annualAllowance">津贴/年</label>
+          <input class="form-input" type="number" id="annualAllowance" value="0" min="0">
+        </div>
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label" for="annualAllowance">津贴/年</label>
-          <input class="form-input" type="number" id="annualAllowance" value="0" min="0" oninput="recalc()">
+          <label class="form-label" for="bonusBase">年终月基数</label>
+          <input class="form-input" type="number" id="bonusBase" value="0" min="0" placeholder="默认等于月薪">
+          <div class="sub-label">留空则用月薪</div>
         </div>
         <div class="form-group">
           <label class="form-label" for="bonusMonths">年终期数</label>
-          <input class="form-input" type="number" id="bonusMonths" value="3" min="0" max="12" step="1" oninput="recalc()">
-          <div class="sub-label">月薪 × 期数 = 年终奖</div>
+          <input class="form-input" type="number" id="bonusMonths" value="3" min="0" max="12" step="1">
+          <div class="sub-label">年终奖 = 基数 × 期数</div>
         </div>
       </div>
     </div>
@@ -230,10 +345,11 @@ input[type=number]{-moz-appearance:textfield}
           <option value="guangzhou">广州</option>
           <option value="shenzhen">深圳</option>
         </select>
+        <div class="sub-label">基数数据来源：2024-2025年度</div>
       </div>
       <div class="form-group">
         <label class="form-label" for="housingFundRate">公积金缴存比例 (%)</label>
-        <input class="form-input" type="number" id="housingFundRate" value="12" min="5" max="12" step="0.5" oninput="recalc()">
+        <input class="form-input" type="number" id="housingFundRate" value="12" min="5" max="12" step="0.5">
       </div>
     </div>
   </div>
@@ -248,40 +364,40 @@ input[type=number]{-moz-appearance:textfield}
       <div class="form-row">
         <div class="form-group">
           <label class="form-label" for="siLower">社保基数下限</label>
-          <input class="form-input" type="number" id="siLower" value="4986" min="0" oninput="recalc()">
+          <input class="form-input" type="number" id="siLower" value="4986" min="0">
         </div>
         <div class="form-group">
           <label class="form-label" for="siUpper">社保基数上限</label>
-          <input class="form-input" type="number" id="siUpper" value="25300" min="0" oninput="recalc()">
+          <input class="form-input" type="number" id="siUpper" value="25300" min="0">
         </div>
       </div>
       <div class="form-row">
         <div class="form-group">
           <label class="form-label" for="hfLower">公积金基数下限</label>
-          <input class="form-input" type="number" id="hfLower" value="2490" min="0" oninput="recalc()">
+          <input class="form-input" type="number" id="hfLower" value="2490" min="0">
         </div>
         <div class="form-group">
           <label class="form-label" for="hfUpper">公积金基数上限</label>
-          <input class="form-input" type="number" id="hfUpper" value="40694" min="0" oninput="recalc()">
+          <input class="form-input" type="number" id="hfUpper" value="40694" min="0">
         </div>
       </div>
       <div class="form-row-3">
         <div class="form-group">
           <label class="form-label">养老 (%)</label>
-          <input class="form-input" type="number" id="siRatePension" value="8" min="0" max="100" step="0.1" oninput="recalc()">
+          <input class="form-input" type="number" id="siRatePension" value="8" min="0" max="100" step="0.1">
         </div>
         <div class="form-group">
           <label class="form-label">医疗 (%)</label>
-          <input class="form-input" type="number" id="siRateMedical" value="2" min="0" max="100" step="0.1" oninput="recalc()">
+          <input class="form-input" type="number" id="siRateMedical" value="2" min="0" max="100" step="0.1">
         </div>
         <div class="form-group">
           <label class="form-label">失业 (%)</label>
-          <input class="form-input" type="number" id="siRateUnemploy" value="0.5" min="0" max="100" step="0.1" oninput="recalc()">
+          <input class="form-input" type="number" id="siRateUnemploy" value="0.5" min="0" max="100" step="0.1">
         </div>
       </div>
       <div class="form-group">
         <label class="form-label" for="taxExemption">免征额 (年)</label>
-        <input class="form-input" type="number" id="taxExemption" value="60000" min="0" oninput="recalc()">
+        <input class="form-input" type="number" id="taxExemption" value="60000" min="0">
       </div>
     </div>
   </div>
@@ -294,9 +410,10 @@ input[type=number]{-moz-appearance:textfield}
     </div>
     <div class="section-content">
       <div id="deductionsContainer"></div>
+      <div class="sub-label" id="exclusionWarning" style="color:#fbbc04;margin-top:var(--space-sm);display:none">⚠️ 住房贷款利息与住房租金不可同时扣除，已自动忽略租金</div>
       <div class="form-group" style="margin-top:var(--space-md)">
         <label class="form-label" for="personalPension">个人养老金 (元/年)</label>
-        <input class="form-input" type="number" id="personalPension" value="0" min="0" max="12000" step="100" oninput="recalc()">
+        <input class="form-input" type="number" id="personalPension" value="0" min="0" max="12000" step="100">
       </div>
     </div>
   </div>
@@ -322,13 +439,37 @@ input[type=number]{-moz-appearance:textfield}
         </table>
       </div>
     </div>
+  <!-- Section 6: Trend Chart -->
+  <div class="section" id="secChart">
+    <div class="section-header" onclick="toggleSection('secChart')">
+      <span>&#9318; 趋势图表</span>
+      <span class="chevron"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5.5l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="section-content">
+      <div class="chart-legend">
+        <span><i style="background:#34a853"></i>月实发</span>
+        <span><i style="background:#fbbc04"></i>月个税</span>
+      </div>
+      <svg id="trendChart" class="chart-svg" height="260"></svg>
+    </div>
   </div>
-</div>
+
+</div><!-- /.container -->
+  </div><!-- /.main-col -->
+</div><!-- /.app-shell -->
+
+<div class="save-toast" id="saveToast"></div>
 
 <script>
-'use strict';
 
-// Data tables
+// ─── Constants ───────────────────────────────────────────────
+const TAX_EXEMPTION_DEFAULT = 60000;
+const PERSONAL_PENSION_MAX = 12000;
+const HF_RATE_MIN = 5;
+const HF_RATE_MAX = 12;
+const BONUS_MONTHS_MAX = 12;
+const DEBOUNCE_DELAY = 120;
+
 const SALARY_TAX_TABLE = [
   { threshold: 0, rate: 0.03, quickDeduction: 0 },
   { threshold: 36000, rate: 0.10, quickDeduction: 2520 },
@@ -413,26 +554,45 @@ const CITY_DATA = {
 
 const DEDUCTION_KEYS = ['childrenEducation','continuingEducation','elderlySupport','housingLoanInterest','housingRent','infantCare'];
 
-function $(id) { return document.getElementById(id); }
+// ─── Utilities ───────────────────────────────────────────────
+const $ = (id) => document.getElementById(id);
+const clamp = (val, lower, upper) => Math.max(lower, Math.min(upper, val));
+const fmt = (val) => '¥' + Math.round(val).toLocaleString('zh-CN');
 
-// Section toggle
-function toggleSection(id) {
-  const el = $(id);
-  if (!el) return;
-  el.classList.toggle('section--open');
+function debounce(fn, delay) {
+  let timer = null;
+  return function(...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn.apply(this, args), delay);
+  };
 }
 
-// Breakdown toggle
+// ─── Section / Breakdown Toggle ─────────────────────────────
+function toggleSection(id) {
+  const el = $(id);
+  if (el) el.classList.toggle('section--open');
+}
+
 let breakdownOpen = false;
 function toggleBreakdown() {
   breakdownOpen = !breakdownOpen;
   $('breakdown').classList.toggle('open', breakdownOpen);
 }
 
-// Build deduction dropdowns
+// ─── Input Validation ────────────────────────────────────────
+function validateInput(el, min, max) {
+  const val = parseFloat(el.value);
+  if (isNaN(val) || val < min || val > max) {
+    el.style.borderColor = '#fbbc04';
+  } else {
+    el.style.borderColor = '';
+  }
+}
+
+// ─── Build Deduction Dropdowns ──────────────────────────────
 (function initDeductions() {
   const container = $('deductionsContainer');
-  DEDUCTION_KEYS.forEach(function(key) {
+  DEDUCTION_KEYS.forEach((key) => {
     const info = DEDUCTION_OPTIONS[key];
     const group = document.createElement('div');
     group.className = 'form-group';
@@ -443,198 +603,518 @@ function toggleBreakdown() {
     const select = document.createElement('select');
     select.className = 'form-select';
     select.id = 'dd_' + key;
-    info.options.forEach(function(opt) {
+    info.options.forEach((opt) => {
       const op = document.createElement('option');
       op.value = opt.value;
       op.textContent = opt.label;
       select.appendChild(op);
     });
-    select.onchange = recalc;
+    select.onchange = recalc; // will be overridden by debouncedRecalcWithSave later
     group.appendChild(label);
     group.appendChild(select);
     container.appendChild(group);
   });
-
-  // Set default housing rent to 1500
+  // Default: housing rent 1500
   $('dd_housingRent').value = '1500';
 })();
 
-// City change: update advanced insurance config
-function onCityChange() {
-  const cityKey = $('city').value;
-  const data = CITY_DATA[cityKey];
-  if (!data) return;
+// ─── Pre-create Monthly Table Rows (DOM Reuse) ──────────────
+(function initMonthlyRows() {
+  const body = $('monthlyBody');
+  for (let m = 1; m <= 12; m++) {
+    const tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td>' + m + '月</td>' +
+      '<td class="num">--</td>' +
+      '<td class="num">--</td>' +
+      '<td class="num">--</td>';
+    body.appendChild(tr);
+  }
+})();
 
+// ─── City Change ─────────────────────────────────────────────
+function onCityChange() {
+  const data = CITY_DATA[$('city').value];
+  if (!data) return;
   $('siLower').value = data.siLower;
   $('siUpper').value = data.siUpper;
   $('hfLower').value = data.hfLower;
   $('hfUpper').value = data.hfUpper;
-
   recalc();
 }
 
-// Utility: clamp like MEDIAN(value, lower, upper)
-function clamp(val, lower, upper) {
-  return Math.max(lower, Math.min(upper, val));
-}
-
-// Progressive tax calculation
+// ─── Tax Calculation ─────────────────────────────────────────
 function calcTax(taxable, table) {
   if (taxable <= 0) return 0;
-  var result = 0;
-  for (var i = table.length - 1; i >= 0; i--) {
+  for (let i = table.length - 1; i >= 0; i--) {
     if (taxable > table[i].threshold) {
-      result = taxable * table[i].rate - table[i].quickDeduction;
-      break;
+      return Math.max(0, taxable * table[i].rate - table[i].quickDeduction);
     }
   }
-  return Math.max(0, result);
+  return 0;
 }
 
-// Format currency
-function fmt(val) {
-  return '¥' + Math.round(val).toLocaleString('zh-CN');
-}
+// ─── Housing Rent / Loan Mutual Exclusion ────────────────────
+function getDeductionsTotal() {
+  let total = 0;
+  const loanVal = parseFloat($('dd_housingLoanInterest').value) || 0;
+  const rentVal = parseFloat($('dd_housingRent').value) || 0;
+  const warning = $('exclusionWarning');
 
-// Flash an element
-function flash(el) {
-  if (!el) return;
-  el.classList.remove('flash');
-  // Force reflow
-  void el.offsetWidth;
-  el.classList.add('flash');
-}
+  // Mutual exclusion: loan takes priority when both selected
+  const hasConflict = loanVal > 0 && rentVal > 0;
+  if (warning) warning.style.display = hasConflict ? 'block' : 'none';
 
-// Main computation
-var prevResultStr = '';
-function recalc() {
-  // Read all inputs
-  var monthlySalary = parseFloat($('monthlySalary').value) || 0;
-  if (!Number.isFinite(monthlySalary)) monthlySalary = 0;
-  var annualAllowance = parseFloat($('annualAllowance').value) || 0;
-  if (!Number.isFinite(annualAllowance)) annualAllowance = 0;
-  var bonusMonths = Math.min(12, Math.max(0, Math.round(parseFloat($('bonusMonths').value) || 0)));
-
-  var siLower = parseFloat($('siLower').value) || 0;
-  var siUpper = parseFloat($('siUpper').value) || 0;
-  var hfLower = parseFloat($('hfLower').value) || 0;
-  var hfUpper = parseFloat($('hfUpper').value) || 0;
-
-  var siRatePension = (parseFloat($('siRatePension').value) || 0) / 100;
-  var siRateMedical = (parseFloat($('siRateMedical').value) || 0) / 100;
-  var siRateUnemploy = (parseFloat($('siRateUnemploy').value) || 0) / 100;
-
-  var housingFundRate = (parseFloat($('housingFundRate').value) || 0) / 100;
-  var taxExemption = parseFloat($('taxExemption').value) || 60000;
-
-  // Read deductions
-  var totalDeductions = 0;
-  DEDUCTION_KEYS.forEach(function(key) {
-    var el = $('dd_' + key);
-    if (el) totalDeductions += parseFloat(el.value) || 0;
+  DEDUCTION_KEYS.forEach((key) => {
+    const el = $('dd_' + key);
+    if (!el) return;
+    // Skip rent if loan is already selected
+    if (key === 'housingRent' && hasConflict) return;
+    total += parseFloat(el.value) || 0;
   });
-  var personalPension = Math.min(12000, Math.max(0, parseFloat($('personalPension').value) || 0));
-  totalDeductions += personalPension / 12; // personalPension is annual, max 12000/year deduction
+  return total;
+}
+
+// ─── Main Computation ────────────────────────────────────────
+let prevResultStr = '';
+function recalc() {
+  // Read inputs
+  let monthlySalary = parseFloat($('monthlySalary').value) || 0;
+  if (!Number.isFinite(monthlySalary)) monthlySalary = 0;
+  let annualAllowance = parseFloat($('annualAllowance').value) || 0;
+  if (!Number.isFinite(annualAllowance)) annualAllowance = 0;
+  const bonusMonths = Math.min(BONUS_MONTHS_MAX, Math.max(0, Math.round(parseFloat($('bonusMonths').value) || 0)));
+  let bonusBase = parseFloat($('bonusBase').value) || 0;
+  if (bonusBase <= 0) bonusBase = monthlySalary; // default to monthly salary
+
+  const siLower = parseFloat($('siLower').value) || 0;
+  const siUpper = parseFloat($('siUpper').value) || 0;
+  const hfLower = parseFloat($('hfLower').value) || 0;
+  const hfUpper = parseFloat($('hfUpper').value) || 0;
+
+  const siRatePension = (parseFloat($('siRatePension').value) || 0) / 100;
+  const siRateMedical = (parseFloat($('siRateMedical').value) || 0) / 100;
+  const siRateUnemploy = (parseFloat($('siRateUnemploy').value) || 0) / 100;
+
+  let housingFundRate = (parseFloat($('housingFundRate').value) || 0) / 100;
+  const taxExemption = parseFloat($('taxExemption').value) || TAX_EXEMPTION_DEFAULT;
+
+  // Validate housing fund rate
+  validateInput($('housingFundRate'), HF_RATE_MIN, HF_RATE_MAX);
+  housingFundRate = clamp(housingFundRate, HF_RATE_MIN / 100, HF_RATE_MAX / 100);
+
+  // Read deductions (with mutual exclusion)
+  let monthlyDeductionItems = getDeductionsTotal();
+  const personalPension = Math.min(PERSONAL_PENSION_MAX, Math.max(0, parseFloat($('personalPension').value) || 0));
+  monthlyDeductionItems += personalPension / 12;
 
   // 1. Income
-  var annualSalary = monthlySalary * 12 + annualAllowance;
-  var bonus = monthlySalary * bonusMonths;
-  var totalPackage = annualSalary + bonus;
+  const annualSalary = monthlySalary * 12 + annualAllowance;
+  const bonus = bonusBase * bonusMonths;
+  const totalPackage = annualSalary + bonus;
 
   // 2. Insurance base
-  var siBase = clamp(monthlySalary, siLower, siUpper);
-  var hfBase = clamp(monthlySalary, hfLower, hfUpper);
+  const siBase = clamp(monthlySalary, siLower, siUpper);
+  const hfBase = clamp(monthlySalary, hfLower, hfUpper);
 
-  // 3. Annual insurance & housing fund
-  var annualPension = siBase * siRatePension * 12;
-  var annualMedical = siBase * siRateMedical * 12;
-  var annualUnemploy = siBase * siRateUnemploy * 12;
-  var annualSI = annualPension + annualMedical + annualUnemploy;
+  // 3. Annual insurance & housing fund (personal portion)
+  const annualPension = siBase * siRatePension * 12;
+  const annualMedical = siBase * siRateMedical * 12;
+  const annualUnemploy = siBase * siRateUnemploy * 12;
+  const annualSI = annualPension + annualMedical + annualUnemploy;
+  const annualHF = hfBase * housingFundRate * 12;
 
-  var annualHF = hfBase * housingFundRate * 12;
-
-  // 4. Taxable income (salary portion)
-  var annualDeductions = taxExemption + totalDeductions * 12 + annualSI + annualHF;
-  var taxableIncomeSalary = Math.max(0, annualSalary - annualDeductions);
-  var taxableIncomeBonus = Math.max(0, bonus);
+  // 4. Taxable income
+  const annualDeductions = taxExemption + monthlyDeductionItems * 12 + annualSI + annualHF;
+  const taxableIncomeSalary = Math.max(0, annualSalary - annualDeductions);
+  const taxableIncomeBonus = Math.max(0, bonus);
 
   // 5. Tax
-  var taxSalary = calcTax(taxableIncomeSalary, SALARY_TAX_TABLE);
-  var taxBonus = calcTax(taxableIncomeBonus, BONUS_TAX_TABLE);
-  var totalTax = taxSalary + taxBonus;
+  const taxSalary = calcTax(taxableIncomeSalary, SALARY_TAX_TABLE);
+  const taxBonus = calcTax(taxableIncomeBonus, BONUS_TAX_TABLE);
+  const totalTax = taxSalary + taxBonus;
 
-  // 6. Take-home
-  // C18 = C6 - C13 - C15 + C16 - C10 - C11 + C14 (Excel exact formula)
-  // Pension + Unemployment = pooled (not in take-home), Medical + Housing Fund = personal account (added back)
-  var annualTakeHome = totalPackage - annualPension - annualUnemploy - taxSalary - taxBonus + annualHF + annualMedical;
-  var monthlyTakeHome = annualTakeHome / 12;
+  // 6. Take-home (actual bank deposit)
+  // 实际到账 = 总包 - 五险(个人) - 公积金(个人) - 个税
+  const actualDeposit = totalPackage - annualSI - annualHF - totalTax;
+  // 含公积金到手 (公积金+医保个人账户返还)
+  const broadTakeHome = totalPackage - annualPension - annualUnemploy - totalTax + annualHF + annualMedical;
+
+  const monthlyTakeHome = actualDeposit / 12;
+  const annualTakeHome = actualDeposit;
 
   // Update result bar
-  var resultStr = [monthlyTakeHome, annualTakeHome, totalPackage, totalTax].map(function(v) { return v.toFixed(2); }).join('|');
+  const resultStr = [monthlyTakeHome, annualTakeHome, totalPackage, totalTax].map(v => v.toFixed(2)).join('|');
 
-  $('monthlyTakeHome').textContent = fmt(monthlyTakeHome);
-  $('annualTakeHome').textContent = fmt(annualTakeHome);
   $('totalPackage').textContent = fmt(totalPackage);
+  $('annualTakeHome').textContent = fmt(annualTakeHome);
+  $('annualBroadTakeHome').textContent = fmt(broadTakeHome);
   $('annualTax').textContent = fmt(totalTax);
 
   // Flash on change
   if (prevResultStr && prevResultStr !== resultStr) {
-    $('resultBar').classList.remove('flash');
-    void $('resultBar').offsetWidth;
-    $('resultBar').classList.add('flash');
+    const bar = $('resultBar');
+    bar.classList.remove('flash');
+    void bar.offsetWidth;
+    bar.classList.add('flash');
   }
   prevResultStr = resultStr;
 
   // Update breakdown
-  var bdMap = {
-    bdMonthlySalary: monthlySalary,
+  const bdMap = {
+    bdAnnualSalaryBase: monthlySalary * 12,
     bdAnnualAllowance: annualAllowance,
     bdBonus: bonus,
     bdAnnualSI: annualSI,
     bdAnnualHF: annualHF,
-    bdAnnualDeductions: annualDeductions,
-    bdTaxableSalary: taxableIncomeSalary,
-    bdTaxableBonus: taxableIncomeBonus,
-    bdTaxOnSalary: taxSalary,
-    bdTaxOnBonus: taxBonus,
+    bdActualDeposit: actualDeposit,
+    bdBroadTakeHome: broadTakeHome,
+    bdTaxTotal: totalTax,
+    bdAnnualMedical: annualMedical,
+    bdAnnualPension: annualPension,
   };
-  Object.keys(bdMap).forEach(function(id) {
-    var el = $(id);
+  Object.keys(bdMap).forEach((id) => {
+    const el = $(id);
     if (el) el.textContent = fmt(bdMap[id]);
   });
+  // Sub-values for tax breakdown
+  const tS = $('bdTaxOnSalary'); if (tS) tS.textContent = fmt(taxSalary);
+  const tB = $('bdTaxOnBonus');  if (tB) tB.textContent = fmt(taxBonus);
 
-  // Monthly table
-  renderMonthly(monthlySalary, annualSI, annualHF, totalDeductions, taxExemption);
+  // Monthly table (reuse existing rows)
+  renderMonthly(monthlySalary, annualAllowance, annualSI, annualHF, monthlyDeductionItems, taxExemption, bonus, taxBonus);
+
+  // Expose monthly data for chart
+  recalc._lastMonthly = { monthlySalary, annualAllowance, annualSI, annualHF, monthlyDeductionItems, taxExemption, bonus, taxBonus };
 }
 
-// Monthly cumulative withholding
-function renderMonthly(monthlySalary, annualSI, annualHF, totalDeductions, taxExemption) {
-  var monthlyDeduction = taxExemption / 12 + totalDeductions + (annualSI + annualHF) / 12;
-  var monthlyHFAndSI = (annualSI + annualHF) / 12;
-  var body = $('monthlyBody');
-  body.innerHTML = '';
-  var cumulativeTaxable = 0;
-  var prevCumulativeTax = 0;
+// ─── Monthly Cumulative Withholding ──────────────────────────
+function renderMonthly(monthlySalary, annualAllowance, annualSI, annualHF, monthlyDeductionItems, taxExemption, bonus, taxBonus) {
+  const monthlyAllowance = annualAllowance / 12;
+  const monthlyGross = monthlySalary + monthlyAllowance;
+  const monthlyDeduction = taxExemption / 12 + monthlyDeductionItems + (annualSI + annualHF) / 12;
+  const monthlyHFAndSI = (annualSI + annualHF) / 12;
 
-  for (var m = 1; m <= 12; m++) {
-    cumulativeTaxable += monthlySalary - monthlyDeduction;
-    var cumulativeTax = calcTax(Math.max(0, cumulativeTaxable), SALARY_TAX_TABLE);
-    var monthTax = cumulativeTax - prevCumulativeTax;
-    var monthTakeHome = monthlySalary - monthTax - monthlyHFAndSI;
+  const rows = $('monthlyBody').children;
+  let cumulativeTaxable = 0;
+  let prevCumulativeTax = 0;
+
+  for (let m = 0; m < 12; m++) {
+    cumulativeTaxable += monthlyGross - monthlyDeduction;
+    const cumulativeTax = calcTax(Math.max(0, cumulativeTaxable), SALARY_TAX_TABLE);
+    const monthTax = cumulativeTax - prevCumulativeTax;
+    const monthTakeHome = monthlyGross - monthTax - monthlyHFAndSI;
     prevCumulativeTax = cumulativeTax;
 
-    var tr = document.createElement('tr');
-    tr.innerHTML =
-      '<td>' + m + '月</td>' +
-      '<td class="num">' + fmt(Math.max(0, cumulativeTaxable)) + '</td>' +
-      '<td class="num">' + fmt(monthTax) + '</td>' +
-      '<td class="num">' + fmt(monthTakeHome) + '</td>';
-    body.appendChild(tr);
+    const cells = rows[m].children;
+    cells[1].textContent = fmt(Math.max(0, cumulativeTaxable));
+    cells[2].textContent = fmt(monthTax);
+    cells[3].textContent = fmt(monthTakeHome);
   }
+
+  // Append summary row (bonus) - reuse or create
+  let summaryRow = $('monthlyBonusRow');
+  if (!summaryRow) {
+    summaryRow = document.createElement('tr');
+    summaryRow.id = 'monthlyBonusRow';
+    summaryRow.style.background = 'var(--color-surface-raised)';
+    summaryRow.innerHTML =
+      '<td style="font-weight:700;color:var(--color-accent)">年终</td>' +
+      '<td class="num">--</td><td class="num">--</td><td class="num">--</td>';
+    $('monthlyBody').appendChild(summaryRow);
+  }
+  const bCells = summaryRow.children;
+  bCells[1].textContent = fmt(bonus);
+  bCells[2].textContent = fmt(taxBonus);
+  bCells[3].textContent = fmt(bonus - taxBonus);
 }
 
-// Initial render
-recalc();
+// ─── Debounced recalc for input events ───────────────────────
+const debouncedRecalc = debounce(recalc, DEBOUNCE_DELAY);
+
+// Attach debounced handler to all form inputs
+document.querySelectorAll('.form-input').forEach((input) => {
+  input.removeAttribute('oninput');
+  input.addEventListener('input', debouncedRecalc);
+});
+
+// ─── URL Params: Load & Save ─────────────────────────────────
+const PARAM_FIELDS = ['monthlySalary','annualAllowance','bonusMonths','bonusBase','city','housingFundRate',
+  'siLower','siUpper','hfLower','hfUpper','siRatePension','siRateMedical','siRateUnemploy',
+  'taxExemption','personalPension'];
+
+function loadFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  let hasParams = false;
+  PARAM_FIELDS.forEach((field) => {
+    const val = params.get(field);
+    if (val !== null) {
+      const el = $(field);
+      if (el) { el.value = val; hasParams = true; }
+    }
+  });
+  // Load deduction selections
+  DEDUCTION_KEYS.forEach((key) => {
+    const val = params.get('dd_' + key);
+    if (val !== null) {
+      const el = $('dd_' + key);
+      if (el) { el.value = val; hasParams = true; }
+    }
+  });
+  return hasParams;
+}
+
+function saveToURL() {
+  const params = new URLSearchParams();
+  PARAM_FIELDS.forEach((field) => {
+    const el = $(field);
+    if (el) params.set(field, el.value);
+  });
+  DEDUCTION_KEYS.forEach((key) => {
+    const el = $('dd_' + key);
+    if (el && el.value !== '0') params.set('dd_' + key, el.value);
+  });
+  const newURL = window.location.pathname + '?' + params.toString();
+  window.history.replaceState(null, '', newURL);
+}
+
+// Save to URL on each recalc (debounced)
+const originalRecalc = recalc;
+const recalcWithSave = function() {
+  originalRecalc();
+  saveToURL();
+};
+// Patch: make debouncedRecalc call recalcWithSave
+const debouncedRecalcWithSave = debounce(recalcWithSave, DEBOUNCE_DELAY);
+document.querySelectorAll('.form-input').forEach((input) => {
+  input.removeEventListener('input', debouncedRecalc);
+  input.addEventListener('input', debouncedRecalcWithSave);
+});
+document.querySelectorAll('.form-select').forEach((select) => {
+  if (select.id === 'city') {
+    select.onchange = function() { onCityChange(); saveToURL(); };
+  } else {
+    select.onchange = debouncedRecalcWithSave;
+  }
+});
+
+// ─── Initial Render ──────────────────────────────────────────
+loadFromURL();
+recalcWithSave();
+
+// ─── SVG Trend Chart ─────────────────────────────────────────
+function renderChart() {
+  const d = recalc._lastMonthly;
+  if (!d) return;
+  const svg = $('trendChart');
+  if (!svg) return;
+
+  const { monthlySalary, annualAllowance, annualSI, annualHF, monthlyDeductionItems, taxExemption } = d;
+  const monthlyAllowance = annualAllowance / 12;
+  const monthlyGross = monthlySalary + monthlyAllowance;
+  const monthlyDeduction = taxExemption / 12 + monthlyDeductionItems + (annualSI + annualHF) / 12;
+  const monthlyHFAndSI = (annualSI + annualHF) / 12;
+
+  const taxes = [], takes = [];
+  let cumulativeTaxable = 0, prevCumulativeTax = 0;
+  for (let m = 0; m < 12; m++) {
+    cumulativeTaxable += monthlyGross - monthlyDeduction;
+    const cumulativeTax = calcTax(Math.max(0, cumulativeTaxable), SALARY_TAX_TABLE);
+    const monthTax = cumulativeTax - prevCumulativeTax;
+    const monthTake = monthlyGross - monthTax - monthlyHFAndSI;
+    prevCumulativeTax = cumulativeTax;
+    taxes.push(Math.max(0, monthTax));
+    takes.push(Math.max(0, monthTake));
+  }
+
+  const W = svg.getBoundingClientRect().width || 400;
+  const H = 260;
+  const PAD = { top: 24, right: 52, bottom: 36, left: 52 };
+  const plotW = W - PAD.left - PAD.right;
+  const plotH = H - PAD.top - PAD.bottom;
+
+  const maxTake = Math.max(...takes) || 1;
+  const maxTax  = Math.max(...taxes) || 1;
+  const scaleT  = maxTake * 1.15;
+  const scaleTx = maxTax  * 3.0;  // compress tax line to ~1/3 chart height
+  
+  const yTake = v => PAD.top + plotH - (v / scaleT) * plotH;
+  const yTax  = v => PAD.top + plotH - (v / scaleTx) * plotH;
+  const xPos  = i => PAD.left + (i / 11) * plotW;
+  
+  const fmtW = v => v >= 10000 ? (v / 10000).toFixed(1) + '\u4e07' : Math.round(v).toString();
+  const fmtTax = v => v >= 1000 ? (v / 1000).toFixed(1) + 'k' : Math.round(v).toString();
+  
+  let html = '';
+  
+  // Horizontal grid lines + left Y-axis (take-home)
+  const TICKS = 4;
+  for (let t = 0; t <= TICKS; t++) {
+    const frac = t / TICKS;
+    const y = (PAD.top + frac * plotH).toFixed(1);
+    const takeVal = scaleT * (1 - frac);
+    html += `<line x1="${PAD.left}" y1="${y}" x2="${(W - PAD.right).toFixed(1)}" y2="${y}" stroke="#2d3140" stroke-width="1" stroke-dasharray="4,3"/>`;
+    html += `<text x="${PAD.left - 5}" y="${(+y + 4).toFixed(1)}" text-anchor="end" font-size="9" fill="#34a853">${fmtW(takeVal)}</text>`;
+  }
+  
+  // Right Y-axis (tax) — independent ticks from 0 to maxTax
+  const TAX_TICKS = 3;
+  for (let t = 0; t <= TAX_TICKS; t++) {
+    const taxVal = (maxTax / TAX_TICKS) * t;
+    const y = yTax(taxVal).toFixed(1);
+    html += `<text x="${(W - PAD.right + 5).toFixed(1)}" y="${(+y + 4).toFixed(1)}" text-anchor="start" font-size="9" fill="#fbbc04">${fmtTax(taxVal)}</text>`;
+  }
+
+  // X-axis baseline
+  const baseY = PAD.top + plotH;
+  html += `<line x1="${PAD.left}" y1="${baseY}" x2="${(W - PAD.right).toFixed(1)}" y2="${baseY}" stroke="#3a3f55" stroke-width="1"/>`;
+
+  // X-axis month labels
+  for (let i = 0; i < 12; i++) {
+    const x = xPos(i).toFixed(1);
+    html += `<text x="${x}" y="${baseY + 14}" text-anchor="middle" font-size="9" fill="#9aa0a6">${i + 1}月</text>`;
+  }
+
+  // Y-axis titles
+  html += `<text x="2" y="${PAD.top - 6}" font-size="9" fill="#34a853">实发</text>`;
+  html += `<text x="${W - 2}" y="${PAD.top - 6}" text-anchor="end" font-size="9" fill="#fbbc04">个税</text>`;
+
+  // Area fill under take-home line
+  const takeArea = takes.map((v, i) => `${xPos(i).toFixed(1)},${yTake(v).toFixed(1)}`).join(' ');
+  const areaPath = `${PAD.left},${baseY} ${takeArea} ${(W - PAD.right).toFixed(1)},${baseY}`;
+  html += `<polygon points="${areaPath}" fill="#34a853" opacity=".08"/>`;
+
+  // Take-home polyline
+  html += `<polyline points="${takeArea}" fill="none" stroke="#34a853" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+
+  // Tax polyline
+  const taxArea = taxes.map((v, i) => `${xPos(i).toFixed(1)},${yTax(v).toFixed(1)}`).join(' ');
+  html += `<polyline points="${taxArea}" fill="none" stroke="#fbbc04" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+
+  // Dots + value labels
+  takes.forEach((v, i) => {
+    const x = xPos(i); const y = yTake(v);
+    html += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3" fill="#34a853" stroke="#0f1117" stroke-width="1.5"/>`;
+    const label = (v / 10000).toFixed(2) + '\u4e07';
+    const anchor = i === 0 ? 'start' : i === 11 ? 'end' : 'middle';
+    html += `<text x="${x.toFixed(1)}" y="${(y - 7).toFixed(1)}" text-anchor="${anchor}" font-size="8" fill="#34a853">${label}</text>`;
+  });
+
+  taxes.forEach((v, i) => {
+    const x = xPos(i); const y = yTax(v);
+    html += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3" fill="#fbbc04" stroke="#0f1117" stroke-width="1.5"/>`;
+    // value label above each dot
+    const lbl = fmtTax(v);
+    const labelY = (y - 6).toFixed(1);
+    html += `<text x="${x.toFixed(1)}" y="${labelY}" text-anchor="middle" font-size="8" fill="#fbbc04">${lbl}</text>`;
+  });
+
+  svg.setAttribute('width', W);
+  svg.setAttribute('height', H);
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  svg.innerHTML = html;
+}
+
+// Re-render chart whenever secChart is opened
+$('secChart').addEventListener('click', () => {
+  requestAnimationFrame(renderChart);
+});
+// Also render after each recalc (deferred so layout is stable)
+const _origRecalcWithSave = recalcWithSave;
+
+// ─── Save / Load Records ──────────────────────────────────────
+const SAVE_KEY = 'salary_records';
+let records = JSON.parse(localStorage.getItem(SAVE_KEY) || '[]');
+let activeRecordId = null;
+
+function getCurrentConfig() {
+  const config = {};
+  PARAM_FIELDS.forEach(f => { const el = $(f); if (el) config[f] = el.value; });
+  DEDUCTION_KEYS.forEach(k => { const el = $('dd_' + k); if (el) config['dd_' + k] = el.value; });
+  return config;
+}
+
+function getCurrentResults() {
+  return {
+    totalPackage: $('totalPackage').textContent,
+    annualTakeHome: $('annualTakeHome').textContent,
+    annualTax: $('annualTax').textContent,
+  };
+}
+
+function showToast(msg) {
+  const t = $('saveToast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+function persistRecords() {
+  localStorage.setItem(SAVE_KEY, JSON.stringify(records));
+}
+
+function renderSidebar() {
+  const list = $('savedList');
+  if (records.length === 0) {
+    list.innerHTML = '<div class="sidebar-empty">\u6682\u65e0\u8bb0\u5f55<br>\u70b9\u51fb\u300c\u4fdd\u5b58\u65b9\u6848\u300d\u5373\u53ef\u6dfb\u52a0</div>';
+    return;
+  }
+  list.innerHTML = records.map(r => {
+    const active = r.id === activeRecordId ? ' active' : '';
+    return `<div class="record-card${active}" onclick="loadRecord('${r.id}')">
+      <div class="record-row1">
+        <span class="record-name">${r.name}</span>
+        <button class="record-del" onclick="deleteRecord(event,'${r.id}')" title="\u5220\u9664">&times;</button>
+      </div>
+      <div class="record-vals">
+        \u5e74\u603b\u5305 <span class="hl">${r.results.totalPackage}</span><br>
+        \u5e74\u5230\u624b <span class="hl">${r.results.annualTakeHome}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function saveRecord() {
+  const nameEl = $('saveName');
+  const name = (nameEl.value.trim()) || ('\u65b9\u6848' + (records.length + 1));
+  const record = {
+    id: Date.now().toString(),
+    name,
+    config: getCurrentConfig(),
+    results: getCurrentResults(),
+  };
+  records.unshift(record);
+  if (records.length > 20) records.pop(); // max 20 records
+  persistRecords();
+  activeRecordId = record.id;
+  renderSidebar();
+  nameEl.value = '';
+  showToast('\u2713 \u5df2\u4fdd\u5b58\u300c' + name + '\u300d');
+}
+
+function deleteRecord(e, id) {
+  e.stopPropagation();
+  records = records.filter(r => r.id !== id);
+  if (activeRecordId === id) activeRecordId = null;
+  persistRecords();
+  renderSidebar();
+}
+
+function loadRecord(id) {
+  const record = records.find(r => r.id === id);
+  if (!record) return;
+  activeRecordId = id;
+  const cfg = record.config;
+  PARAM_FIELDS.forEach(f => { const el = $(f); if (el && cfg[f] !== undefined) el.value = cfg[f]; });
+  DEDUCTION_KEYS.forEach(k => { const el = $('dd_' + k); if (el && cfg['dd_' + k] !== undefined) el.value = cfg['dd_' + k]; });
+  // Also sync city-dependent fields
+  recalcWithSave();
+  renderSidebar();
+  showToast('\u5df2\u52a0\u8f7d\u300c' + record.name + '\u300d');
+}
+
+// Init sidebar
+renderSidebar();
 
 </script>
 </body>
