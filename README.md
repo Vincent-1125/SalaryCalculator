@@ -1,4 +1,4 @@
-# 个税计算器 — Salary Calculator
+# 个税计算器 - [Salary Calculator](https://vincent-1125.github.io/SalaryCalculator/)
 
 中国个人所得税薪资计算器，单文件纯前端网页，支持五险一金、专项附加扣除、年终奖单独计税、累计预扣法月度明细。
 
